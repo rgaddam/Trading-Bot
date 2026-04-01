@@ -99,3 +99,90 @@ notifications (Slack / Telegram)
 market-hours validation
 stricter live-trading safeguards
 better option contract selection verification
+
+
+---- 
+Environment Variables
+
+Create a .env file or export variables in your shell.
+
+Example:
+
+export ANTHROPIC_API_KEY="your_api_key_here"
+export IB_HOST="127.0.0.1"
+export IB_PORT="7497"
+export IB_CLIENT_ID="1"
+export IB_ACCOUNT="YOUR_PAPER_ACCOUNT"
+
+If ANTHROPIC_API_KEY is not set, the bot falls back to the built-in rules engine.
+
+Interactive Brokers Setup
+TWS / IB Gateway Settings
+
+For paper trading, open TWS or IB Gateway and enable API access.
+
+Suggested paper ports:
+
+TWS Paper: 7497
+TWS Live: 7496
+IB Gateway Paper: 4002
+
+In TWS:
+
+Go to Edit → Global Configuration → API → Settings
+Enable:
+Enable ActiveX and Socket Clients
+Allow connections from localhost only
+Set the correct socket port
+Turn Read-Only API off if you want order placement enabled
+Configuration
+
+Main settings are in config.py.
+
+Important sections:
+
+IBKRConfig → broker connection settings
+TimeConfig → trading windows and timezone
+IndicatorConfig → symbol, bar size, indicator periods
+OptionsConfig → option type, moneyness, premium cap
+RiskConfig → stop loss, daily loss, max trades
+AIConfig → Claude model and prompt instructions
+BotConfig → top-level configuration and paper/live mode
+Running the Bot
+
+Start TWS or IB Gateway first, then run:
+
+python bot.py
+
+The bot will:
+
+Connect to Interactive Brokers
+Pull recent QQQ bars
+Compute indicators
+Generate a setup signal
+Evaluate the setup using:
+Claude, if configured
+rule-based logic otherwise
+Pass the trade through risk checks
+Submit an order if all checks pass
+Sleep and repeat on the configured loop interval
+Backtesting and Simulation
+
+This repo also includes helper scripts:
+
+Simulate the current trading day
+python simulate_today.py
+
+Run a historical backtest
+python backtest.py
+
+Inspect account information
+python find_account.py
+
+Safety Notes
+Start in paper trading mode only
+Use very small sizing before any live deployment
+Never hardcode real credentials in source files
+Never commit .env, logs, or account identifiers
+Validate option contract selection before enabling live trading
+Monitor order behavior carefully during paper tests
