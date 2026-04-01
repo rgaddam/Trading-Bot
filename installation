@@ -1,0 +1,101 @@
+Installation
+1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/trading-bot.git
+cd trading-bot
+2. Create and activate a virtual environment
+macOS / Linux
+python3 -m venv .venv
+source .venv/bin/activate
+Windows
+python -m venv .venv
+.venv\Scripts\activate
+3. Install dependencies
+pip install -r requirements.txt
+Environment Variables
+
+Create a local .env file or export these variables in your shell:
+
+export ANTHROPIC_API_KEY="your_api_key_here"
+export IB_HOST="127.0.0.1"
+export IB_PORT="7497"
+export IB_CLIENT_ID="1"
+export IB_ACCOUNT="YOUR_PAPER_ACCOUNT"
+
+If ANTHROPIC_API_KEY is not set, the bot should fall back to the internal rule-based engine.
+
+Interactive Brokers Setup
+
+Start TWS or IB Gateway first.
+
+Recommended paper ports
+TWS Paper: 7497
+TWS Live: 7496
+IB Gateway Paper: 4002
+In TWS
+
+Go to:
+
+Edit → Global Configuration → API → Settings
+
+Enable:
+
+Enable ActiveX and Socket Clients
+Allow connections from localhost only
+
+Use the correct socket port and make sure Read-Only API is OFF if you want order placement enabled.
+
+Configuration
+
+Most settings live in config.py.
+
+Main sections:
+
+IBKRConfig → host, port, client ID, account
+TimeConfig → allowed trading windows and timezone
+IndicatorConfig → bar size, lookback, EMA settings, VWAP
+OptionsConfig → option type, moneyness, premium cap
+RiskConfig → stop loss, daily max loss, trade count limits
+AIConfig → Claude model and behavior instructions
+BotConfig → top-level bot settings including paper/live mode
+Running the Bot
+
+Start TWS or IB Gateway, then run:
+
+python bot.py
+
+Typical runtime flow:
+
+Connect to Interactive Brokers
+Pull recent QQQ bars
+Compute indicators
+Detect a trade setup
+Evaluate through Claude or fallback rules
+Pass the trade through risk checks
+Submit an order if approved
+Sleep and repeat on the configured loop interval
+Simulation and Backtesting
+Simulate the current trading day
+python simulate_today.py
+Run a historical backtest
+python backtest.py
+Inspect account information
+python find_account.py
+Safety Notes
+Start with paper trading only
+Do not hardcode API keys or account IDs in source code
+Do not commit .env, logs, installers, or virtual environments
+Validate option selection carefully before any live testing
+Monitor every paper trade before considering real capital deployment
+Recommended Improvements
+
+Before using this as a serious live-trading system, consider adding:
+
+.env loading with python-dotenv
+structured logging
+unit tests
+better exception handling around broker disconnects
+trade journal output (CSV / SQLite)
+notifications (Slack / Telegram)
+market-hours validation
+stricter live-trading safeguards
+better option contract selection verification
